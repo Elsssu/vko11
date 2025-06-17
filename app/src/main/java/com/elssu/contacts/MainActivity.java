@@ -50,7 +50,21 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Contact> contacts = storage.getContacts();
         if (contacts == null || contacts.isEmpty()) return;
 
+
+        Collections.sort(contacts, (c1, c2) -> isAscending
+                ? c1.getFirstName().compareTo(c2.getFirstName())
+                : c2.getFirstName().compareTo(c1.getFirstName()));
+
+        adapter.notifyDataSetChanged();
+        isAscending = !isAscending;
+    }
+
+    public void sortByGroup(View view) {
+        ArrayList<Contact> contacts = storage.getContacts();
+        if (contacts == null || contacts.isEmpty()) return;
+
         Contact[] contactArray = contacts.toArray(new Contact[0]);
+
 
         for (int i = 1; i < contactArray.length; i++) {
             Contact key = contactArray[i];
@@ -58,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
             Iterator<Contact> iterator = contacts.iterator();
             while (j >= 0 && (isAscending
-                    ? contactArray[j].getFirstName().compareTo(key.getFirstName()) > 0
-                    : contactArray[j].getFirstName().compareTo(key.getFirstName()) < 0)) {
+                    ? contactArray[j].getContactGroup().compareTo(key.getContactGroup()) > 0
+                    : contactArray[j].getContactGroup().compareTo(key.getContactGroup()) < 0)) {
                 contactArray[j + 1] = contactArray[j];
                 j--;
             }
@@ -68,18 +82,6 @@ public class MainActivity extends AppCompatActivity {
 
         contacts.clear();
         Collections.addAll(contacts, contactArray);
-
-        adapter.notifyDataSetChanged();
-        isAscending = !isAscending;
-
-    }
-    public void sortByGroup(View view) {
-        ArrayList<Contact> contacts = storage.getContacts();
-        if (contacts == null || contacts.isEmpty()) return;
-
-        Collections.sort(contacts, (c1, c2) -> isAscending
-                ? c1.getContactGroup().compareTo(c2.getContactGroup())
-                : c2.getContactGroup().compareTo(c1.getContactGroup()));
 
         adapter.notifyDataSetChanged();
         isAscending = !isAscending;
