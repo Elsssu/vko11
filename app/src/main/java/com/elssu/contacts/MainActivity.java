@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ContactStorage storage;
     private ContactListAdapter adapter;
+    private boolean isAscending = true;
     private RecyclerView recyclerView;
 
     @Override
@@ -47,24 +48,35 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     public void SortAlphabetically(View view) {
-        Collections.sort(storage.getContacts(), Comparator.comparing(Contact::getFirstName));
-        Iterator<Contact> iterator = ContactStorage.getInstance().getContacts().iterator();
+        ArrayList<Contact> contacts = storage.getContacts();
+        if (contacts == null || contacts.isEmpty()) return;
+
+        ArrayList<Contact> sortedContacts = new ArrayList<>(contacts);
+
+        sortedContacts.sort((c1, c2) -> isAscending
+                ? c1.getFirstName().compareTo(c2.getFirstName())
+                : c2.getFirstName().compareTo(c1.getFirstName()));
+
+        Iterator<Contact> iterator = sortedContacts.iterator();
+        contacts.clear();
         while (iterator.hasNext()) {
-            Contact contact = iterator.next();
-            System.out.println(contact.getFirstName() + " - " + contact.getFullName());
+            contacts.add(iterator.next());
         }
+
         adapter.notifyDataSetChanged();
+        isAscending = !isAscending;
 
     }
     public void sortByGroup(View view) {
         ArrayList<Contact> contacts = storage.getContacts();
         if (contacts == null || contacts.isEmpty()) return;
 
-        Collections.sort(contacts, (c1, c2) -> c1.getContactGroup().compareTo(c2.getContactGroup()));
+        Collections.sort(contacts, (c1, c2) -> isAscending
+                ? c1.getContactGroup().compareTo(c2.getContactGroup())
+                : c2.getContactGroup().compareTo(c1.getContactGroup()));
 
-        contacts.iterator().forEachRemaining(c -> System.out.println(c.getContactGroup() + " - " + c.getFullName()));
         adapter.notifyDataSetChanged();
-
+        isAscending = !isAscending;
     }
 ;
 
