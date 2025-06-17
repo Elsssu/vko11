@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,17 +50,24 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Contact> contacts = storage.getContacts();
         if (contacts == null || contacts.isEmpty()) return;
 
-        ArrayList<Contact> sortedContacts = new ArrayList<>(contacts);
+        Contact[] contactArray = contacts.toArray(new Contact[0]);
 
-        sortedContacts.sort((c1, c2) -> isAscending
-                ? c1.getFirstName().compareTo(c2.getFirstName())
-                : c2.getFirstName().compareTo(c1.getFirstName()));
+        for (int i = 1; i < contactArray.length; i++) {
+            Contact key = contactArray[i];
+            int j = i - 1;
 
-        Iterator<Contact> iterator = sortedContacts.iterator();
-        contacts.clear();
-        while (iterator.hasNext()) {
-            contacts.add(iterator.next());
+            Iterator<Contact> iterator = contacts.iterator();
+            while (j >= 0 && (isAscending
+                    ? contactArray[j].getFirstName().compareTo(key.getFirstName()) > 0
+                    : contactArray[j].getFirstName().compareTo(key.getFirstName()) < 0)) {
+                contactArray[j + 1] = contactArray[j];
+                j--;
+            }
+            contactArray[j + 1] = key;
         }
+
+        contacts.clear();
+        Collections.addAll(contacts, contactArray);
 
         adapter.notifyDataSetChanged();
         isAscending = !isAscending;
