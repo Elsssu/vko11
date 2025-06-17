@@ -9,12 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ContactListAdapter extends RecyclerView.Adapter<ContactViewholder> {
 
     private Context context;
     private ArrayList<Contact> contacts = new ArrayList<>();
-
     public ContactListAdapter(Context context, ArrayList<Contact> contacts) {
         this.context = context;
         this.contacts = contacts;
@@ -33,6 +34,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactViewholder> 
         holder.contactType.setText(contacts.get(position).getContactGroup());
         holder.ProfilePic.setImageResource(contacts.get(position).getImage());
 
+
         holder.contactDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,7 +43,6 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactViewholder> 
                 notifyItemRemoved(pos);
             }
         });
-
         holder.contactDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
