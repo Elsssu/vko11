@@ -42,6 +42,25 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
     }
+    public void sortByGroup(View view) {
+        ArrayList<Contact> contacts = storage.getContacts();
+        if (contacts == null || contacts.isEmpty()) return;
+
+        // Sort using an anonymous function (Lambda)
+        Collections.sort(contacts, (c1, c2) -> isAscending
+                ? c1.getContactGroup().compareTo(c2.getContactGroup())
+                : c2.getContactGroup().compareTo(c1.getContactGroup()));
+
+        // Use an Iterator to traverse after sorting
+        Iterator<Contact> iterator = contacts.iterator();
+        while (iterator.hasNext()) {
+            Contact contact = iterator.next();
+            System.out.println(contact.getContactGroup() + " - " + contact.getFullName());
+        }
+
+        adapter.notifyDataSetChanged(); // Refresh RecyclerView
+        isAscending = !isAscending; // Toggle sorting order
+    }
     public void switchToAddContact(View view) {
         Intent intent = new Intent(this, AddContactActivity.class);
         startActivity(intent);
@@ -59,34 +78,7 @@ public class MainActivity extends AppCompatActivity {
         isAscending = !isAscending;
     }
 
-    public void sortByGroup(View view) {
-        ArrayList<Contact> contacts = storage.getContacts();
-        if (contacts == null || contacts.isEmpty()) return;
 
-        Contact[] contactArray = contacts.toArray(new Contact[0]);
-
-
-        for (int i = 1; i < contactArray.length; i++) {
-            Contact key = contactArray[i];
-            int j = i - 1;
-
-            Iterator<Contact> iterator = contacts.iterator();
-            while (j >= 0 && (isAscending
-                    ? contactArray[j].getContactGroup().compareTo(key.getContactGroup()) > 0
-                    : contactArray[j].getContactGroup().compareTo(key.getContactGroup()) < 0)) {
-                contactArray[j + 1] = contactArray[j];
-                j--;
-            }
-            contactArray[j + 1] = key;
-        }
-
-        contacts.clear();
-        Collections.addAll(contacts, contactArray);
-
-        adapter.notifyDataSetChanged();
-        isAscending = !isAscending;
-    }
-;
 
 
 
