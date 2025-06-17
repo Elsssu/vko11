@@ -21,7 +21,7 @@ import java.util.Iterator;
 public class MainActivity extends AppCompatActivity {
 
     private ContactStorage storage;
-
+    private ContactListAdapter adapter;
     private RecyclerView recyclerView;
 
     @Override
@@ -31,11 +31,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         storage = ContactStorage.getInstance();
-
+        adapter = new ContactListAdapter(getApplicationContext(), storage.getContacts());
         recyclerView = findViewById(R.id.ListContactsRV);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new ContactListAdapter(getApplicationContext(), storage.getContacts()));
-
+        recyclerView.setAdapter(adapter);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             Contact contact = iterator.next();
             System.out.println(contact.getFirstName() + " - " + contact.getFullName());
         }
-        //ContactListAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
 
     }
     public void sortByGroup(View view) {
@@ -63,10 +63,10 @@ public class MainActivity extends AppCompatActivity {
         Collections.sort(contacts, (c1, c2) -> c1.getContactGroup().compareTo(c2.getContactGroup()));
 
         contacts.iterator().forEachRemaining(c -> System.out.println(c.getContactGroup() + " - " + c.getFullName()));
-
+        adapter.notifyDataSetChanged();
 
     }
-
+;
 
 
 
